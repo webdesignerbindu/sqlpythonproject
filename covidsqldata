@@ -1,0 +1,49 @@
+import sqlite3
+connection= sqlite3.connect('covid.db')
+cursor_obj = connection.cursor()
+cursor_obj.execute("DROP TABLE IF EXISTS COVID")
+cursor_obj.execute(""" CREATE TABLE covid(
+            AADHAR_NO CHAR(25) PRIMARY KEY,
+            FIRST_NAME CHAR(25) NOT NULL,
+            LAST_NAME CHAR(25),
+            AGE INT NOT NULL,
+            DOSE_DONE INT)
+        """)
+aadhar_no=int(input("Enter your Aadhar Number\n"))
+if len(str(aadhar_no))==5:
+    print("Please Proceed......")
+else:
+    print("Enter Details Properly")
+first_name=input("Enter your First name\n")
+last_name=input("Enter your Last name\n")
+if first_name==last_name:
+    print("Names are same")
+else:
+    age=int(input("Enter your age\n"))
+    if age<13:
+        print("Vaccination not applicable")
+    elif age>60:
+        print("Please visit booster dose portal")
+    else:
+        print("Please Enter the Vaccination Details:")
+
+dose_done=int(input("Enter the Dosage Done\n"))
+if dose_done==0:
+    res=2-dose_done
+    print("You are not vaccinated Please do Vaccinate to prevent covid\nDOSES LEFT:{}".format(res))
+elif dose_done==1:
+    res1=2-dose_done
+    print("pending is {} more vaccine good to go..!Vaccinate soon to prevent covid\nDOSES LEFT:{}".format(res1,res1))
+elif dose_done==2:
+    res2=2
+    print("Hurray!!!Vaccination is Done....\nDOSES DONE:{}".format(res2))
+else:
+    print("Wrong Entry")
+
+cursor_obj.execute("""INSERT INTO covid(AADHAR_NO,FIRST_NAME,LAST_NAME,AGE,DOSE_DONE) VALUES(?, ?, ?, ?, ?)""",(aadhar_no,first_name,last_name,age,dose_done))
+connection.commit()
+cursor_obj.execute("SELECT * FROM covid")
+myresult = cursor_obj.fetchall()
+for x in myresult:
+  print(x)
+connection.close()
